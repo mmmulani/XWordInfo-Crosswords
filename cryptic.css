@@ -1,0 +1,22 @@
+.puzzle-board {
+  background-color: black;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.puzzle-item {
+  background-color: white;
+  border: 1px solid black;
+  width: 2em;
+  height: 2em;
+}
+
+.puzzle-blank {
+  background-color: black;
+}
+
+.puzzle-num {
+  position: relative;
+  top: 0;
+  left: 0;
+}
