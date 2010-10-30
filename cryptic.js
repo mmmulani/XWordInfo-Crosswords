@@ -17,33 +17,55 @@ function drawCrossword() {
   var rows = crossword.size.rows;
   var cols = crossword.size.cols;
 
+  // Create the crossword board using a table.
   var table = document.createElement("table");
-  table.className = "puzzle-board";
+  table.classList.add("puzzle-board");
   table.cellPadding = table.cellSpacing = "0";
   for (var i = 0; i < rows; i++) {
     var tr = document.createElement("tr");
     for (var j = 0; j < cols; j++) {
       var index = (i * rows) + j;
       var td = document.createElement("td");
+      td.classList.add("puzzle-cell");
       tr.appendChild(td);
+      var content = document.createElement("div");
+      td.appendChild(content);
+
       var isBlank = (crossword.grid[index]) == ".";
-      td.className = "puzzle-item";
+      content.classList.add("puzzle-item");
 
       if (isBlank)
-        td.className += "puzzle-blank";
+        td.classList.add("puzzle-blank");
 
       if (crossword.gridnums[index] != 0) {
         var num = crossword.gridnums[index];
         var numDiv = document.createElement("div");
-        numDiv.className = "puzzle-num";
+        numDiv.classList.add("puzzle-num");
         numDiv.innerHTML = num;
-        td.appendChild(numDiv);
+        content.appendChild(numDiv);
       }
-      //td.innerHTML = isBlank ? "." : "-";
+
+      var textDiv = document.createElement("div");
+      textDiv.classList.add("puzzle-text");
+      textDiv.innerHTML = isBlank ? "" : "A";
+
+      content.appendChild(textDiv);
     }
     table.appendChild(tr);
   }
   document.body.appendChild(table);
+
+  // Now create the Clues.
+  var across = crossword.clues.across;
+  var down = crossword.clues.down;
+
+  var columns = document.createElement("div");
+  columns.classList.add("columns");
+  for (var i = 0; i < across.length; i++) {
+    
+  }
+
+  document.body.appendChild(columns);
 
   }catch(err){alert(err);}
 }
@@ -91,7 +113,21 @@ crossword = {
                 60,0,0,0,0,61,0,0,0,0,0,62,0,0,0,
                 63,0,0,0,0,64,0,0,0,0,0,65,0,0,0,
                 66,0,0,0,0,67,0,0,0,0,0,68,0,0,0 ],
-  "circles": [ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
+  "circles": [ 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+               0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 ],
   "clues": {
     "across": [ "1. Waxed", "5. First name in erotica", "10. They might be chocolate", "14. ___ Flynn Boyle of \"Twin Peaks\"", "15. Request at a laundry", "16. Like some keys", "17. Dye plant", "18. Popular women's fragrance", "19. Together, in music", "20. Makes people offers they can't refuse?", "22. Apportionment", "23. Set of values", "24. View from Marseille", "25. Relatives, slangily", "27. You might end up with a bum one", "30. Actress Tyler", "31. Child, for one", "34. Adler who outwitted Sherlock Holmes", "36. ___ impulse", "38. ___ + grenadine + maraschino cherry = Roy Rogers cocktail", "39. Illumination of manuscripts, and others", "40. Headline-making illness of 2002-03", "41. Dis", "42. Mushroom maker, for short", "43. Tony nominee for \"Glengarry Glen Ross\"", "44. Interrogator's discovery", "45. Cultural org.", "46. Retain", "48. Rand who created Dagny Taggart", "49. Striped quartz", "53. ___ pop, music genre since the 1980s", "55. Nocturnal bloodsucker", "60. Tony Musante TV series", "61. Extracted chemical", "62. Punishment unit", "63. Frost", "64. Options during computer woes", "65. James of jazz", "66. Competitor of Ben & Jerry's", "67. \"Thus ...\"", "68. Spotted" ],
     "down": [ "1. Ruiner of many a photo", "2. Charged", "3. Filmmaker Von Stroheim", "4. Theme of this puzzle", "5. Without ___ (riskily)", "6. It may be wrinkled", "7. Ancient Semitic fertility goddess", "8. Bakery employee", "9. Elvis Presley's \"___ Not You\"", "10. Detective's need", "11. Like some six-packs", "12. See 32-Down", "13. Vile smile", "21. That, to Tomás", "26. Home of \"The Last Supper\"", "27. Place for picnicking and dog-walking", "28. Hill dwellers", "29. ___ alla genovese (sauce)", "30. City where 32- and 12-Down is found", "31. Also sends to, as an e-mail", "32. With 12-Down, locale of the 4-Down", "33. \"Ishtar\" director", "35. You might give a speech by this", "37. Ultrasecret org.", "47. \"That mad game the world so loves to play,\" to Jonathan Swift", "48. ___ ready", "50. Peter out", "51. It's often unaccounted for", "52. Allen in American history", "54. All ___", "55. Lynn who sang \"We'll Meet Again\"", "56. Port near the Red Sea", "57. Yellow squirt?", "58. Pie chart figs.", "59. \"Wishing won't make ___\"" ]

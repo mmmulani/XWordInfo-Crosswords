@@ -1,12 +1,15 @@
 .puzzle-board {
-  background-color: black;
   border: 1px solid black;
   border-collapse: collapse;
 }
 
-.puzzle-item {
-  background-color: white;
+.puzzle-cell {
   border: 1px solid black;
+  position: relative;
+}
+
+.puzzle-item {
+  position: relative;
   width: 2em;
   height: 2em;
 }
@@ -17,6 +20,15 @@
 
 .puzzle-num {
   position: relative;
+  padding-left: 1px;
+  padding-top: 0px;
   top: 0;
   left: 0;
+  font-size: 10pt;
+}
+
+.puzzle-text {
+  position: absolute;
+  top: 0.6em;
+  left: 0.6em;
 }
