@@ -53,14 +53,21 @@ function drawCrossword() {
     }
     table.appendChild(tr);
   }
-  document.body.appendChild(table);
+  //document.body.appendChild(table);
 
   // Now create the Clues.
   var across = crossword.clues.across;
   var down = crossword.clues.down;
 
+  var superColumn = document.createElement("div");
+  superColumn.appendChild(table);
+  superColumn.classList.add("largecolumns");
+
   var columns = document.createElement("div");
   columns.classList.add("columns");
+
+  superColumn.appendChild(columns);
+
   function makeCluesList(clues) {
     var cluesList = document.createElement("ol");
     for (var i = 0; i < clues.length; i++) {
@@ -83,7 +90,11 @@ function drawCrossword() {
   columns.appendChild(makeCluesList(across));
   columns.appendChild(makeCluesList(down));
 
-  document.body.appendChild(columns);
+  //XXX: move to using a column for each type of clue.
+
+  //document.body.appendChild(columns);
+  superColumn.appendChild(columns);
+  document.body.appendChild(superColumn);
 
   }catch(err){alert(err);}
 }

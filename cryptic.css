@@ -42,7 +42,9 @@
   height: auto;
 }
 
-.columns table {
-  -moz-column-span: all;
-  -webkit-column-span: all;
+.largecolumns {
+  -moz-column-width: 35em;
+  -moz-column-gap: 3em;
+  -webkit-column-width: 35em;
+  -webkit-column-gap: 3em;
 }
