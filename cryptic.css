@@ -32,3 +32,17 @@
   top: 0.6em;
   left: 0.6em;
 }
+
+.columns {
+  -moz-column-width: 20em;
+  -moz-column-gap: 3em;
+  -webkit-column-width: 20em;
+  -webkit-column-gap: 3em;
+  display: block;
+  height: auto;
+}
+
+.columns table {
+  -moz-column-span: all;
+  -webkit-column-span: all;
+}

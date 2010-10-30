@@ -61,9 +61,27 @@ function drawCrossword() {
 
   var columns = document.createElement("div");
   columns.classList.add("columns");
-  for (var i = 0; i < across.length; i++) {
-    
-  }
+  function makeCluesList(clues) {
+    var cluesList = document.createElement("ol");
+    for (var i = 0; i < clues.length; i++) {
+      var clueItem = document.createElement("li");
+      var text = clues[i];
+      // Tries to split up the clue into two parts:
+      // 12. Like some keys
+      // ^   ^-- clue text
+      // --- number
+      var matches = text.match(/^(\d*)\.\s*(.*)/);
+      if (matches) {
+        clueItem.value = matches[1];
+        text = matches[2];
+      }
+      clueItem.innerHTML = text;
+      cluesList.appendChild(clueItem);
+    }
+    return cluesList;
+  };
+  columns.appendChild(makeCluesList(across));
+  columns.appendChild(makeCluesList(down));
 
   document.body.appendChild(columns);
 
