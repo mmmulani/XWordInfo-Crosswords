@@ -1,3 +1,13 @@
+function initCrossword() {
+  loadCrosswordsFromStorage();
+
+  drawCrossword();
+}
+
+function quitCrossword() {
+  saveCrosswordsToStorage();
+}
+
 function loadCrosswordFromURL(url) {
   url += "&callback=loadCrossword";
 
@@ -6,12 +16,104 @@ function loadCrosswordFromURL(url) {
   document.head.appendChild(script);
 }
 
+/* crossword properties:
+ * title, author, editor, publisher, date, notepad, copyright: strings.
+ * size: object with numeric rows and cols property.
+ * grid: array of size rows*cols. Each element is a letter or fill-in.
+ * gridnums: array of size rows*cols. Each element is a number.
+ * circles: array of size rows*cols. Each element is 0 or 1.
+ * clues: object with across and down arrays.
+ * answers: object with across and down arrays, same order as clues.
+ *
+ * progress: array of size rows*cols. Each element is a space character
+ *    indicating no progress or a string (does not have to match grid).
+ *    This is an added property and not found in XWordInfo crosswords.
+ */
 var crossword;
 function loadCrossword(data) {
   crossword = data;
   drawCrossword();
 }
 
+// crosswords: hash of dates, each date is an array of crosswords.
+var crosswords = {};
+
+// If entries conflict, takes the value from progA.
+// TODO: Return value of how many characters were merged.
+// 0 => added without merge. N > 0 => added with N characters merged.
+// Z < 0 => was unable to add due to some error.
+function mergeProgress(progA, progB) {
+  if (!(progB instanceof Array))
+    return progA;
+  if (!(progA instanceof Array))
+    return progB;
+
+  if (progA.length != progB.length)
+    return progA;
+
+  var toRet = progA.slice();
+  for (var i = 0; i < progA.length; i++) {
+    if (progB[i] != " " && progA[i] == " ")
+      toRet[i] = progB[i];
+  }
+
+  return toRet;
+}
+
+// addCrossword can be slow, but should be fast enough for <300 entries.
+// Crosswords are not validated before-hand, which could break with
+// versioning.
+function addCrossword(crossword) {
+  // First check if we already have the crossword, and if so, merge the
+  // entries.
+  if (crossword.date in crosswords) {
+    var mergeArr = crosswords[crossword.date];
+    for each (var oldCrossword in mergeArr) {
+      // Lossily check if the two crosswords are the same.
+      if (oldCrossword.grid.join("") == newCrossword.grid.join("")) {
+        var newProgress = mergeProgress(oldCrossword.progress,
+                                        crossword.progress);
+        oldCrossword.progress = progress;
+        return;
+      }
+    }
+    mergeArr.push(crossword);
+    return;
+  }
+
+  crosswords[crossword.date] = [crossword];
+}
+
+const HTML5_CROSSWORD_STORE = "cryptic_crosswords";
+
+// loadCrosswordsFromStorage: Load crosswords into crosswords array using
+// HTML5 local storage. This operation should merge the crosswords from
+// storage with the currently loaded ones.
+function loadCrosswordsFromStorage() {
+  // TODO: Display this information to the user.
+  // Check for lacking support.
+  if (typeof(localStorage) == "undefined")
+    return;
+
+  var newCrosswords = JSON.parse(localStorage.getItem(HTML5_CROSSWORD_STORE));
+  for each (var dateArr in newCrosswords)
+    dateArr.forEach(addCrossword);
+}
+
+// saveCrosswordsToStorage: Complement to loadCFS, assumes that the
+// previously stored crosswords have been loading before making this call.
+// XXX: This would likely break with multiple instances of the app open.
+function saveCrosswordsToStorage() {
+  if (typeof(localStorage) == "undefined")
+    return;
+
+  var jsonCrosswords = JSON.stringify(crosswords);
+
+  localStorage.setItem(HTML5_CROSSWORD_STORE, jsonCrosswords);
+}
+
+// drawCrossword: Present the current crossword on the page
+// in pure HTML.
 function drawCrossword() {
   try {
   var rows = crossword.size.rows;
@@ -53,20 +155,10 @@ function drawCrossword() {
     }
     table.appendChild(tr);
   }
-  //document.body.appendChild(table);
 
   // Now create the Clues.
   var across = crossword.clues.across;
   var down = crossword.clues.down;
-
-  var superColumn = document.createElement("div");
-  superColumn.appendChild(table);
-  superColumn.classList.add("largecolumns");
-
-  var columns = document.createElement("div");
-  columns.classList.add("columns");
-
-  superColumn.appendChild(columns);
 
   function makeCluesList(clues) {
     var cluesList = document.createElement("ol");
@@ -82,18 +174,21 @@ function drawCrossword() {
         clueItem.value = matches[1];
         text = matches[2];
       }
-      clueItem.innerHTML = text;
+      clueItem.textContent = text;
       cluesList.appendChild(clueItem);
     }
     return cluesList;
   };
-  columns.appendChild(makeCluesList(across));
-  columns.appendChild(makeCluesList(down));
 
-  //XXX: move to using a column for each type of clue.
+  // Use columns to layout the board and clues.
+  var superColumn = document.createElement("div");
+  superColumn.classList.add("largecolumns");
 
-  //document.body.appendChild(columns);
-  superColumn.appendChild(columns);
+  superColumn.appendChild(table);
+
+  superColumn.appendChild(makeCluesList(across));
+  superColumn.appendChild(makeCluesList(down));
+
   document.body.appendChild(superColumn);
 
   }catch(err){alert(err);}
@@ -168,4 +263,5 @@ crossword = {
   "notepad": "TEEN PUZZLEMAKER WEEK<br />All the daily crosswords this week, Monday through Saturday, have been contributed by puzzlemakers under the age of 20. Today's crossword is by Caleb Madison, 15, of New York City. He is a sophomore at Bard High School in Manhattan. This is his fourth puzzle for The Times.<br /><br />When this puzzle is done, connect the circled letters in alphabetical order, and then back to the start, to reveal something seen on the 32-Down 4-Down.",
   "copyright": "2008, The New York Times"
 };
-window.addEventListener("load", drawCrossword, false);
+window.addEventListener("load", initCrossword, false);
+window.addEventListener("unload", quitCrossword, false);

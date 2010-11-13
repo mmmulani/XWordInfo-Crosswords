@@ -43,8 +43,8 @@
 }
 
 .largecolumns {
-  -moz-column-width: 35em;
+  -moz-column-width: 32em;
   -moz-column-gap: 3em;
-  -webkit-column-width: 35em;
+  -webkit-column-width: 32em;
   -webkit-column-gap: 3em;
 }
