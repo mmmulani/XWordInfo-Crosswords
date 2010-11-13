@@ -1,6 +1,5 @@
 soon:
-  - save/restore crosswords using html5
-  - smart merge (for progress)
+  - show crosswords by LRU
 
 later:
   - interface to fill in puzzles
