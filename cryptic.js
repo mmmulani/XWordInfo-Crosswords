@@ -85,7 +85,7 @@ function addCrossword(crossword) {
       if (oldCrossword.grid.join("") == crossword.grid.join("")) {
         var newProgress = mergeProgress(oldCrossword.progress,
                                         crossword.progress);
-        oldCrossword.progress = progress;
+        oldCrossword.progress = crossword.progress;
         return;
       }
     }
