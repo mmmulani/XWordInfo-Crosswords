@@ -82,7 +82,7 @@ function addCrossword(crossword) {
       oldCrossword = mergeArr[oldCrossword];
 
       // Lossily check if the two crosswords are the same.
-      if (oldCrossword.grid.join("") == newCrossword.grid.join("")) {
+      if (oldCrossword.grid.join("") == crossword.grid.join("")) {
         var newProgress = mergeProgress(oldCrossword.progress,
                                         crossword.progress);
         oldCrossword.progress = progress;
