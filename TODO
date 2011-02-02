@@ -1,6 +1,8 @@
 soon:
   - show crosswords by LRU
+  - ability to flip crossword
 
 later:
   - interface to fill in puzzles
   - allow multiple instances of the app with constant updating
+  - start using html5 web cache
