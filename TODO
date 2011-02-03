@@ -6,3 +6,5 @@ later:
   - interface to fill in puzzles
   - allow multiple instances of the app with constant updating
   - start using html5 web cache
+  - change favicon to reflect current state
+  - change title when crossword changes?
