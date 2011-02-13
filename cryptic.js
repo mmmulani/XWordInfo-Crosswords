@@ -176,7 +176,7 @@ function drawCrossword() {
   var across = crossword.clues.across;
   var down = crossword.clues.down;
 
-  function makeCluesList(clues) {
+  var makeCluesList = function(clues) {
     var cluesList = document.createElement("ol");
     for (var i = 0; i < clues.length; i++) {
       var clueItem = document.createElement("li");
