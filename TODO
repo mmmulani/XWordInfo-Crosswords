@@ -1,10 +1,11 @@
 soon:
-  - show crosswords by LRU
-  - ability to flip crossword
+  - server communication?
+  - interface to fill in puzzles
 
 later:
-  - interface to fill in puzzles
+  - show crosswords by LRU
   - allow multiple instances of the app with constant updating
   - start using html5 web cache
   - change favicon to reflect current state
   - change title when crossword changes?
+  - ability to flip crossword
