@@ -164,7 +164,8 @@ function drawCrossword() {
 
       var textDiv = document.createElement("div");
       textDiv.className += "puzzle-text ";
-      textDiv.innerHTML = isBlank ? "" : "A";
+      textDiv.innerHTML = isBlank ? "" :
+             (Math.floor(10 + (Math.random() * 26))).toString(36).toUpperCase();
 
       content.appendChild(textDiv);
     }
@@ -173,27 +174,9 @@ function drawCrossword() {
 
   // Now create the Clues.
   var across = crossword.clues.across;
+  var acrossList = makeCluesList(across);
   var down = crossword.clues.down;
-
-  var makeCluesList = function(clues) {
-    var cluesList = document.createElement("ol");
-    for (var i = 0; i < clues.length; i++) {
-      var clueItem = document.createElement("li");
-      var text = clues[i];
-      // Tries to split up the clue into two parts:
-      // 12. Like some keys
-      // ^   ^-- clue text
-      // --- number
-      var matches = text.match(/^(\d*)\.\s*(.*)/);
-      if (matches) {
-        clueItem.value = matches[1];
-        text = matches[2];
-      }
-      clueItem.textContent = text;
-      cluesList.appendChild(clueItem);
-    }
-    return cluesList;
-  };
+  var downList = makeCluesList(down);
 
   // Use columns to layout the board and clues.
   var superColumn = document.createElement("div");
@@ -205,6 +188,27 @@ function drawCrossword() {
   superColumn.appendChild(makeCluesList(down));
 
   document.body.appendChild(superColumn);
+}
+
+// The passed in |clues| is of the form ["1. Clue", "3. Clue", etc.].
+function makeCluesList(clues) {
+  var cluesList = document.createElement("ol");
+  for (var i = 0; i < clues.length; i++) {
+    var clueItem = document.createElement("li");
+    var text = clues[i];
+    // Tries to split up the clue into two parts:
+    // 12. Like some keys
+    // ^   ^-- clue text
+    // --- number
+    var matches = text.match(/^(\d*)\.\s*(.*)/);
+    if (matches) {
+      clueItem.value = matches[1];
+      text = matches[2];
+    }
+    clueItem.textContent = text;
+    cluesList.appendChild(clueItem);
+  }
+  return cluesList;
 }
 
 function randomProperty(obj) {
