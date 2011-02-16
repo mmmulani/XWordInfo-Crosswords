@@ -131,7 +131,6 @@ function saveCrosswordsToStorage() {
 // drawCrossword: Present the current crossword on the page
 // in pure HTML.
 function drawCrossword() {
-  try {
   var rows = crossword.size.rows;
   var cols = crossword.size.cols;
 
@@ -206,8 +205,6 @@ function drawCrossword() {
   superColumn.appendChild(makeCluesList(down));
 
   document.body.appendChild(superColumn);
-
-  }catch(err){alert(err);}
 }
 
 function randomProperty(obj) {
