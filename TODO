@@ -1,6 +1,7 @@
 soon:
   - server communication?
   - interface to fill in puzzles
+  - show clues in scroll box with proper scrolling
 
 later:
   - show crosswords by LRU
