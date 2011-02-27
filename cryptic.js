@@ -172,8 +172,8 @@ function drawCrossword() {
     }
     table.appendChild(tr);
   }
-  table._player = new crosswordPlayer(table);
-  table._player.activate(0,0);
+  table._player = new crosswordPlayer(table, crossword);
+  table._player.activate(0);
 
   // Now create the Clues.
   var across = crossword.clues.across;
@@ -233,28 +233,33 @@ function randomProperty(obj) {
   return prop;
 }
 
-function crosswordPlayer(board) {
+function crosswordPlayer(board, crossword) {
   this._board = board;
+  this._crossword = crossword;
 }
 crosswordPlayer.prototype = {
   // This is the HTML table element corresponding to the board.
   _board: null,
+
+  // Crossword object as defined earlier.
+  _crossword: null,
+
   // This is the HTML table cell that was last active.
   _lastActive: null,
-  _getCellAt: function(x,y) {
-    var row = this._board.childNodes[y];
-    return !row ? undefined : row.childNodes[x];
+  _getCellAt: function(index) {
+    var row = this._board.childNodes[~~(index / this._crossword.size.rows)];
+    return !row ? undefined : row.childNodes[index % this._crossword.size.rows];
   },
-  activate: function(x,y) {
+  activate: function(index) {
     if (this._lastActive)
       this._lastActive.setAttribute("active", false);
 
-    var cell = this._getCellAt(x,y);
+    var cell = this._getCellAt(index);
     this._lastActive = cell;
-    if (cell) {
-      cell.setAttribute("active", true);
-    }
+    if (!cell)
+      return;
 
+    cell.setAttribute("active", true);
   },
 };
 
