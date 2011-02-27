@@ -8,13 +8,17 @@
   position: relative;
 }
 
+.puzzle-cell[active="true"] {
+  background-color: rgb(0,0,255);
+}
+
 .puzzle-item {
   position: relative;
   width: 2em;
   height: 2em;
 }
 
-.puzzle-blank {
+.puzzle-cell[blank="true"] {
   background-color: black;
 }
 
@@ -29,7 +33,7 @@
 
 .puzzle-text {
   position: absolute;
-  top: 0.6em;
+  top: 0.7em;
   left: 0.6em;
 }
 
@@ -48,4 +52,8 @@
   -webkit-column-width: 32em;
   -webkit-column-gap: 3em;
   height: 90%;
+}
+
+#crosswordEntry {
+  opacity: 0;
 }

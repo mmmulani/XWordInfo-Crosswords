@@ -144,15 +144,16 @@ function drawCrossword() {
       var index = (i * rows) + j;
       var td = document.createElement("td");
       td.className += "puzzle-cell ";
-      tr.appendChild(td);
-      var content = document.createElement("div");
-      td.appendChild(content);
 
       var isBlank = (crossword.grid[index]) == ".";
+      td.setAttribute("blank", isBlank);
+
+      tr.appendChild(td);
+
+      var content = document.createElement("div");
       content.className += "puzzle-item ";
 
-      if (isBlank)
-        td.className += "puzzle-blank ";
+      td.appendChild(content);
 
       if (crossword.gridnums[index] != 0) {
         var num = crossword.gridnums[index];
@@ -171,6 +172,8 @@ function drawCrossword() {
     }
     table.appendChild(tr);
   }
+  table._player = new crosswordPlayer(table);
+  table._player.activate(0,0);
 
   // Now create the Clues.
   var across = crossword.clues.across;
@@ -178,16 +181,24 @@ function drawCrossword() {
   var down = crossword.clues.down;
   var downList = makeCluesList(down);
 
-  // Use columns to layout the board and clues.
-  var superColumn = document.createElement("div");
-  superColumn.className += "largecolumns ";
+  // Horizontally arrange the board and clues.
+  var horizList = document.createElement("ul");
+  horizList.style.listStyleType = "none";
 
-  superColumn.appendChild(table);
+  var listItems = [table, acrossList, downList];
+  for (var i = 0; i < listItems.length; i++) {
+    var item = listItems[i];
 
-  superColumn.appendChild(makeCluesList(across));
-  superColumn.appendChild(makeCluesList(down));
+    var newDiv = document.createElement("div");
+    newDiv.appendChild(item);
+    newDiv.style.float = "left";
 
-  document.body.appendChild(superColumn);
+    var listItem = document.createElement("li");
+    listItem.appendChild(newDiv);
+    horizList.appendChild(listItem);
+  }
+
+  document.body.appendChild(horizList);
 }
 
 // The passed in |clues| is of the form ["1. Clue", "3. Clue", etc.].
@@ -221,6 +232,31 @@ function randomProperty(obj) {
 
   return prop;
 }
+
+function crosswordPlayer(board) {
+  this._board = board;
+}
+crosswordPlayer.prototype = {
+  // This is the HTML table element corresponding to the board.
+  _board: null,
+  // This is the HTML table cell that was last active.
+  _lastActive: null,
+  _getCellAt: function(x,y) {
+    var row = this._board.childNodes[y];
+    return !row ? undefined : row.childNodes[x];
+  },
+  activate: function(x,y) {
+    if (this._lastActive)
+      this._lastActive.setAttribute("active", false);
+
+    var cell = this._getCellAt(x,y);
+    this._lastActive = cell;
+    if (cell) {
+      cell.setAttribute("active", true);
+    }
+
+  },
+};
 
 // Event listeners
 window.addEventListener("load", initCrossword, false);
