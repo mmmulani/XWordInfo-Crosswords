@@ -30,7 +30,10 @@ function loadCrosswordFromURL(url) {
  * title, author, editor, publisher, date, notepad, copyright: strings.
  * size: object with numeric rows and cols property.
  * grid: array of size rows*cols. Each element is a letter or fill-in.
- * gridnums: array of size rows*cols. Each element is a number.
+         If a space is not filled, it is a "." character.
+ * gridnums: array of size rows*cols. Each element is a number corresponding
+             to the number meant to be in display. If no number is meant to be
+             displayed, a 0 is used.
  * circles: array of size rows*cols. Each element is 0 or 1.
  * clues: object with across and down arrays.
  * answers: object with across and down arrays, same order as clues.
@@ -173,7 +176,7 @@ function drawCrossword() {
     table.appendChild(tr);
   }
   table._player = new crosswordPlayer(table, crossword);
-  table._player.activate(0);
+  table._player.activate(0, true);
 
   // Now create the Clues.
   var across = crossword.clues.across;
@@ -247,19 +250,34 @@ crosswordPlayer.prototype = {
   // This is the HTML table cell that was last active.
   _lastActive: null,
   _getCellAt: function(index) {
-    var row = this._board.childNodes[~~(index / this._crossword.size.rows)];
-    return !row ? undefined : row.childNodes[index % this._crossword.size.rows];
+    var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
+    return !row ? undefined : row.childNodes[index % this._crossword.size.cols];
   },
-  activate: function(index) {
+  activate: function(index, horiz) {
     if (this._lastActive)
-      this._lastActive.setAttribute("active", false);
+      this._lastActive.removeAttribute("active");
 
     var cell = this._getCellAt(index);
     this._lastActive = cell;
     if (!cell)
       return;
 
-    cell.setAttribute("active", true);
+    // Now we get the indices for the word.
+    var jumpAmount = horiz ? this._crossword.size.cols : 1;
+    var indices = [];
+    for (var i = index; (i >= 0) && (this._crossword.grid[i] != ".");
+          i -= jumpAmount)
+      indices.unshift(i);
+    for (var i = (index + jumpAmount); (i < this._crossword.grid.length) &&
+                             (this._crossword.grid[i] != "."); i += jumpAmount)
+      indices.push(i);
+
+    var self = this;
+    indices.map(function(x) {
+      self._getCellAt(x).setAttribute("active", "close");
+    });
+
+    cell.setAttribute("active", "selected");
   },
 };
 
