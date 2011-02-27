@@ -247,22 +247,15 @@ crosswordPlayer.prototype = {
   // Crossword object as defined earlier.
   _crossword: null,
 
-  // This is the HTML table cell that was last active.
+  // _lastActive has an |index| and |direction| property of the last active
+  // item.
   _lastActive: null,
   _getCellAt: function(index) {
     var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
     return !row ? undefined : row.childNodes[index % this._crossword.size.cols];
   },
-  activate: function(index, horiz) {
-    if (this._lastActive)
-      this._lastActive.removeAttribute("active");
-
-    var cell = this._getCellAt(index);
-    this._lastActive = cell;
-    if (!cell)
-      return;
-
-    // Now we get the indices for the word.
+  // This returns an array of indices corresponding to the word at |index|.
+  _getIndices: function(index, horiz) {
     var jumpAmount = horiz ? this._crossword.size.cols : 1;
     var indices = [];
     for (var i = index; (i >= 0) && (this._crossword.grid[i] != ".");
@@ -272,12 +265,32 @@ crosswordPlayer.prototype = {
                              (this._crossword.grid[i] != "."); i += jumpAmount)
       indices.push(i);
 
+    return indices;
+  },
+
+  activate: function(index, horiz) {
     var self = this;
+
+    if (this._lastActive) {
+      var indices = this._getIndices(this._lastActive.index,
+                                     this._lastActive.direction);
+      indices.map(function (x) {
+        self._getCellAt(x).removeAttribute("active");
+      });
+    }
+
+    var cell = this._getCellAt(index);
+    if (!cell)
+      return;
+
+    var indices = this._getIndices(index, horiz);
     indices.map(function(x) {
       self._getCellAt(x).setAttribute("active", "close");
     });
 
     cell.setAttribute("active", "selected");
+
+    this._lastActive = { index: index, direction: horiz };
   },
 };
 
