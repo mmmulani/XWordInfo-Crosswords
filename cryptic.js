@@ -176,7 +176,11 @@ function drawCrossword() {
     table.appendChild(tr);
   }
   table._player = new crosswordPlayer(table, crossword);
-  table._player.activate(0, true);
+  var randomSpot;
+  do {
+    randomSpot = Math.floor(Math.random() * crossword.grid.length);
+  } while (crossword.grid[randomSpot] == ".");
+  table._player.activate(randomSpot, Math.random() > 0.5);
 
   // Now create the Clues.
   var across = crossword.clues.across;
@@ -255,20 +259,25 @@ crosswordPlayer.prototype = {
     return !row ? undefined : row.childNodes[index % this._crossword.size.cols];
   },
   // This returns an array of indices corresponding to the word at |index|.
-  _getIndices: function(index, horiz) {
-    var jumpAmount = horiz ? this._crossword.size.cols : 1;
+  _getIndices: function(index, vert) {
+    var jumpAmount = vert ? this._crossword.size.cols : 1;
     var indices = [];
-    for (var i = index; (i >= 0) && (this._crossword.grid[i] != ".");
-          i -= jumpAmount)
+    var start = vert ? 0 :
+              this._crossword.size.cols * ~~(index / this._crossword.size.cols);
+    var end = vert ? this._crossword.grid.length : start + this._crossword.size.cols;
+    for (var i = index;
+         (i >= start) && (this._crossword.grid[i] != ".");
+         i -= jumpAmount)
       indices.unshift(i);
-    for (var i = (index + jumpAmount); (i < this._crossword.grid.length) &&
-                             (this._crossword.grid[i] != "."); i += jumpAmount)
+    for (var i = (index + jumpAmount);
+         (i < end) && (this._crossword.grid[i] != ".");
+         i += jumpAmount)
       indices.push(i);
 
     return indices;
   },
 
-  activate: function(index, horiz) {
+  activate: function(index, vert) {
     var self = this;
 
     if (this._lastActive) {
@@ -283,14 +292,14 @@ crosswordPlayer.prototype = {
     if (!cell)
       return;
 
-    var indices = this._getIndices(index, horiz);
+    var indices = this._getIndices(index, vert);
     indices.map(function(x) {
       self._getCellAt(x).setAttribute("active", "close");
     });
 
     cell.setAttribute("active", "selected");
 
-    this._lastActive = { index: index, direction: horiz };
+    this._lastActive = { index: index, direction: vert };
   },
 };
 
