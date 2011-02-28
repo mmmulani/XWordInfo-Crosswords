@@ -288,6 +288,10 @@ crosswordPlayer.prototype = {
   init: function() {
     var self = this;
 
+    this._board.addEventListener("click", function(event) {
+      self.onBoardClick(event);
+    });
+
     if (entryBox._lastListener)
       entryBox.removeEventListener("keydown", entryBox._lastListener, false);
     var keyListener = function(event) {
@@ -323,6 +327,37 @@ crosswordPlayer.prototype = {
     cell.setAttribute("active", "selected");
 
     this._lastActive = { index: index, direction: vert };
+
+    entryBox.focus();
+  },
+
+  onBoardClick: function(event) {
+    event.stopPropagation();
+
+    var cell;
+    // The click might have been on an element inside the table cell, so we
+    // normalize it to the cell.
+    for (cell = event.target; cell; cell = cell.parentNode) {
+      if (cell.localName == "td" && cell.parentNode &&
+          cell.parentNode.parentNode == this._board)
+        break;
+    }
+
+    if (!cell)
+      return;
+
+    var column = Array.prototype.indexOf.call(cell.parentNode.childNodes, cell);
+    var row = Array.prototype.indexOf.call(cell.parentNode.parentNode.childNodes,
+                                           cell.parentNode);
+    var index = (row * this._crossword.size.cols) + column;
+
+    // We change the direction of the shown clue if the user clicks on the
+    // selected cell. Otherwise, we move to the cell clicked and maintain the
+    // direction.
+    var direction = false;
+    if (this._lastActive)
+      direction = (this._lastActive.index == index) ^ this._lastActive.direction;
+    this.activate(index, direction);
   },
 
   onKeyDown: function(event) {
