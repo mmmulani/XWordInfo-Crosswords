@@ -393,6 +393,25 @@ crosswordPlayer.prototype = {
 
     this.activate(index, this._lastActive.direction);
   },
+  moveUp: function(index) {
+    var i;
+    var width = this._crossword.size.cols;
+    for (i = index - width; i >= 0 && this._crossword.grid[i] == "."; i -= width);
+
+    index = i < 0 ? index : i;
+
+    this.activate(index, this._lastActive.direction);
+  },
+  moveDown: function(index) {
+    var i;
+    var width = this._crossword.size.cols;
+    for (i = index + width; i < this._crossword.grid.length &&
+                            this._crossword.grid[i] == "."; i += width);
+
+    index = i >= this._crossword.grid.length ? index : i;
+
+    this.activate(index, this._lastActive.direction);
+  },
 };
 
 // Event listeners
