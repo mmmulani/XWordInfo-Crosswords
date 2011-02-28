@@ -307,6 +307,10 @@ crosswordPlayer.prototype = {
   activate: function(index, vert) {
     var self = this;
 
+    // This case can happen when the user clicks on a black square.
+    if (this._crossword.grid[index] == ".")
+      return;
+
     if (this._lastActive) {
       var indices = this._getIndices(this._lastActive.index,
                                      this._lastActive.direction);
