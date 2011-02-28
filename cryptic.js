@@ -1,6 +1,8 @@
 'use strict';
 
 function initCrossword() {
+  entryBox = document.getElementById("crosswordEntry");
+
   loadCrosswordsFromStorage();
 
   if (crosswordCount > 0) {
@@ -48,6 +50,10 @@ function loadCrossword(data) {
   crossword = data;
   drawCrossword();
 }
+
+// entryBox: an input box that the user interacts with in order to play the
+//           crossword. An event listener is added by the crosswordPlayer object.
+var entryBox;
 
 // crosswords: hash of dates, each date is an array of crosswords.
 var crosswords = {};
@@ -243,6 +249,8 @@ function randomProperty(obj) {
 function crosswordPlayer(board, crossword) {
   this._board = board;
   this._crossword = crossword;
+
+  this.init();
 }
 crosswordPlayer.prototype = {
   // This is the HTML table element corresponding to the board.
@@ -277,6 +285,21 @@ crosswordPlayer.prototype = {
     return indices;
   },
 
+  init: function() {
+    var self = this;
+
+    if (entryBox._lastListener)
+      entryBox.removeEventListener("keydown", entryBox._lastListener, false);
+    var keyListener = function(event) {
+      self.onKeyDown(event);
+    };
+    entryBox.addEventListener("keydown", keyListener, false);
+    entryBox._lastListener = keyListener;
+    entryBox.focus();
+  },
+
+  // This focuses the crossword at |index|, in direction |vert| and allows
+  // input there.
   activate: function(index, vert) {
     var self = this;
 
@@ -300,6 +323,53 @@ crosswordPlayer.prototype = {
     cell.setAttribute("active", "selected");
 
     this._lastActive = { index: index, direction: vert };
+  },
+
+  onKeyDown: function(event) {
+    if (!this._lastActive)
+      return;
+    // XXX: This is to avoid some oddities on Mac when entering accent
+    //      characters with the alt key.
+    if (event.altKey)
+      event.preventDefault();
+
+    if (!event.ctrlKey && !event.metaKey) {
+      var handled = false;
+      switch (event.keyCode) {
+        // Space key.
+        case 32:
+          handled = true;
+          this.activate(this._lastActive.index, !this._lastActive.direction);
+          break;
+
+        // Left key.
+        case 37:
+          handled = true;
+          this.moveLeft();
+          break;
+        // Right key.
+        case 38:
+          handled = true;
+          this.moveRight();
+          break;
+
+        // Up key.
+        case 39:
+          handled = true;
+          this.moveUp();
+          break;
+        // Down key.
+        case 40:
+          handled = true;
+          this.moveDown();
+          break;
+      }
+
+      if (handled) {
+        event.preventDefault();
+        return;
+      }
+    }
   },
 };
 
