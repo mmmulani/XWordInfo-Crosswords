@@ -333,35 +333,36 @@ crosswordPlayer.prototype = {
     if (event.altKey)
       event.preventDefault();
 
+    var index = this._lastActive.index;
     if (!event.ctrlKey && !event.metaKey) {
       var handled = false;
       switch (event.keyCode) {
         // Space key.
         case 32:
           handled = true;
-          this.activate(this._lastActive.index, !this._lastActive.direction);
+          this.activate(index, !this._lastActive.direction);
           break;
 
         // Left key.
         case 37:
           handled = true;
-          this.moveLeft();
+          this.moveLeft(index);
           break;
         // Right key.
-        case 38:
+        case 39:
           handled = true;
-          this.moveRight();
+          this.moveRight(index);
           break;
 
         // Up key.
-        case 39:
+        case 38:
           handled = true;
-          this.moveUp();
+          this.moveUp(index);
           break;
         // Down key.
         case 40:
           handled = true;
-          this.moveDown();
+          this.moveDown(index);
           break;
       }
 
@@ -370,6 +371,27 @@ crosswordPlayer.prototype = {
         return;
       }
     }
+  },
+
+  // The move[Left,Right,Up,Down] functions each take the index from which
+  // they will move.
+  moveLeft: function(index) {
+    var start = this._crossword.size.cols * ~~(index / this._crossword.size.cols);
+    var i;
+    for (i = index - 1; i >= start && this._crossword.grid[i] == "."; i--);
+
+    index = i < start ? index : i;
+
+    this.activate(index, this._lastActive.direction);
+  },
+  moveRight: function(index) {
+    var end = this._crossword.size.cols * ~~(1 + index / this._crossword.size.cols);
+    var i;
+    for (i = index + 1; i < end && this._crossword.grid[i] == "."; i++);
+
+    index = i >= end ? index : i;
+
+    this.activate(index, this._lastActive.direction);
   },
 };
 
