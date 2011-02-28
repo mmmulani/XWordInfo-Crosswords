@@ -290,7 +290,7 @@ crosswordPlayer.prototype = {
 
     this._board.addEventListener("click", function(event) {
       self.onBoardClick(event);
-    });
+    }, false);
 
     if (entryBox._lastListener)
       entryBox.removeEventListener("keydown", entryBox._lastListener, false);
@@ -331,12 +331,12 @@ crosswordPlayer.prototype = {
     cell.setAttribute("active", "selected");
 
     this._lastActive = { index: index, direction: vert };
-
-    entryBox.focus();
   },
 
   onBoardClick: function(event) {
     event.stopPropagation();
+
+    entryBox.focus();
 
     var cell;
     // The click might have been on an element inside the table cell, so we
