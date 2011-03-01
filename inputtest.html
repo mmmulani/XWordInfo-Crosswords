@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1" />
+<title>Input Event Logger</title>
+<style>body, pre { margin: 0; }</style>
+</head>
+<body>
+<input id="input" autofocus="true" maxlength="12" />
+<script>
+var time = Date.now();
+var input = document.getElementById('input');
+input.onfocus = input.onblur =
+input.oninput = input.onchange = input.onsubmit =
+input.onkeydown = input.onkeypress = input.onkeyup =
+input.onmousedown = input.onmouseup = input.onclick =
+function(event) {
+  var now = Date.now();
+  if (now - time > 100)
+    document.body.insertBefore(document.createElement('hr'), this.nextSibling);
+  time = now;
+  var msg = document.createElement('pre');
+  msg.textContent = [event.type, this.value].join(':   \t');
+  document.body.insertBefore(msg, this.nextSibling);
+  //if (event.type == 'input')
+  //  this.value = '';
+};
+var keys = [];
+for (var key in navigator)
+  keys.push(key);
+keys.sort().forEach(function(key) {
+  if (key.length < 12 && typeof navigator[key] == 'string')
+    document.body.appendChild(document.createElement('pre')).textContent =
+      [key, navigator[key]].join(':   \t');
+});
+</script>
+</body>
+</html>

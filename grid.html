@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Grid Input Demo</title>
+<style>
+html {
+  display: table;
+  width: 100%;
+  height: 100%;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  display: table-cell;
+  vertical-align: middle;
+  margin: 0;
+}
+
+input, table, tr, td {
+  padding; 0;
+  border: 0;
+  margin: auto;
+  border-collapse: collapse;
+  -moz-transition: .3s;
+  -webkit-transition: .3s;
+}
+
+input {
+  display: block;
+  outline: 0;
+  font-size: 1px;
+  overflow: hidden;
+  pointer-events: none;
+  -moz-transform: scale(0);
+  -webkit-transform: scale(0);
+}
+
+table {
+  -moz-user-focus: ignore;
+}
+
+tr {
+  height: 14.2857%;
+}
+
+td {
+  width: 14.2857%;
+  outline: 1px solid #ccc;
+  background: #333;
+  color: #fff;
+  font: 24px Georgia, serif;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+input:focus + table > tr > td[focus=selected] {
+  background: #6cf;
+}
+
+input:focus + table > tr > td[focus=neighbor] {
+  background: #999;
+}
+</style>
+<script>
+function selectCell(cell) {
+  var node, parent = cell.parentNode;
+  var index = Array.prototype.indexOf.call(parent.childNodes, cell);
+  while (node = document.querySelector('td[focus]'))
+    node.removeAttribute('focus');
+  cell.setAttribute('focus', 'selected');
+  ['previousSibling', 'nextSibling'].forEach(function(sibling) {
+    node = cell, parent = cell.parentNode;
+    while (node = horiz ? node[sibling] : (parent = parent[sibling]) &&
+                  parent.childNodes[index])
+      node.setAttribute('focus', 'neighbor');
+  });
+  input.value = cell.textContent;
+  // scrollIntoView is too wonky in Android Browser
+  if (SAFARI)
+    cell.scrollIntoView();
+}
+
+function resizeGrid() {
+  // on Android, innerHeight depends on whether the keyboard is displayed :\
+  var size = Math.min(window.innerWidth, window.innerHeight) * .9;
+  var size = Math.max(Math.min(size, 672), 224);
+  input.style.width = table.style.width =
+  input.style.height = table.style.height = size + 'px';
+  table.style.marginTop = -size + 'px';
+}
+
+var input, table, time, horiz = true;
+
+var WEBKIT = navigator.vendor;
+var SAFARI = navigator.vendor == 'Apple Computer, Inc.';
+
+document.addEventListener('DOMContentLoaded', function() {
+  input = document.querySelector('input');
+
+  input.addEventListener('focus', function() {
+    if (!document.querySelector('td[focus=selected]'))
+      selectCell(document.querySelector('td'));
+  }, true);
+
+  input.addEventListener('input', function() {
+    var cell = document.querySelector('td[focus=selected]');
+    if (!cell)
+      return;
+    var value = this.value.slice(cell.textContent.length);
+    // support multiple async inputs, such as swype
+    var now = Date.now();
+    if (value == ' ') {
+      if (now - time < 50)
+        return;
+      time = now;
+      setTimeout(function() {
+        if (time != now)
+          return;
+        horiz = !horiz;
+        selectCell(cell);
+      }, 50);
+      return;
+    }
+    time = now;
+    var parent = cell.parentNode;
+    var index = Array.prototype.indexOf.call(parent.childNodes, cell);
+    var next = true;
+    value.split('').some(function(value) {
+      if (value == ' ')
+        return;
+      input.value = cell.textContent = value;
+      if (!next)
+        return;
+      if (next = horiz ? cell.nextSibling : (parent = parent.nextSibling) &&
+                                            parent.childNodes[index])
+        selectCell(cell = next);
+      else
+        next = false;
+    });
+  }, true);
+
+  input.addEventListener('keydown', function(event) {
+    this.selectionStart = this.value.length;
+    if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey ||
+        event.keyCode < 37 || event.keyCode > 40)
+      return;
+    var cell = document.querySelector('td[focus=selected]');
+    if (!cell)
+      return;
+    var parent = cell.parentNode;
+    var index = Array.prototype.indexOf.call(parent.childNodes, cell);
+    if (event.keyCode == 37) { // LEFT
+      if (cell = cell.previousSibling)
+        selectCell(cell);
+    }
+    else if (event.keyCode == 39) { // RIGHT
+      if (cell = cell.nextSibling)
+        selectCell(cell);
+    }
+    else if (event.keyCode == 38) { // UP
+      if (cell = (parent = parent.previousSibling) && parent.childNodes[index])
+        selectCell(cell);
+    }
+    else // DOWN
+      if (cell = (parent = parent.nextSibling) && parent.childNodes[index])
+        selectCell(cell);
+  }, true);
+
+  input.addEventListener(WEBKIT ? 'keyup' : 'keypress', function(event) {
+    if (event.ctrlKey || event.altKey || event.shiftKey || event.metaKey ||
+        event.keyCode != 8) // NOT BACKSPACE
+      return;
+    var cell = document.querySelector('td[focus=selected]');
+    if (cell)
+      input.value = cell.textContent = '';
+    // TODO: make repeated deletion easy with smart leftward caret movement
+  }, true);
+
+  table = document.querySelector('table');
+  for (var i = 0, row, j; i++ < 7;)
+    for (row = table.appendChild(document.createElement('tr')), j = 0; j++ < 7;)
+      row.appendChild(document.createElement('td'));
+
+  // TODO: make buggy touch events work too, since click is too slow
+  table.addEventListener('click', function(event) {
+    if (input.disabled || event.target.localName != 'td')
+      return;
+    if (document.activeElement != input)
+      input.focus();
+    if (event.target.getAttribute('focus') != 'selected')
+      selectCell(event.target);
+  }, true);
+
+  // workaround for Mobile Safari's buggy keyboard
+  SAFARI && table.addEventListener('mousedown', function(event) {
+    if (document.activeElement == input) {
+      input.disabled = true;
+      setTimeout(function() { input.disabled = false; }, 0);
+    }
+  }, true);
+
+  resizeGrid();
+  window.addEventListener('resize', resizeGrid, true);
+}, true);
+</script>
+</head>
+<body><input autocomplete="off" spellcheck="false" /><table></table></body>
+</html>
