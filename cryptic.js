@@ -423,9 +423,9 @@ crosswordPlayer.prototype = {
         return;
       }
 
-      // Display the character on the screen at the current highlighted spot
+      // Display the character on the screen at the current highlighted spot.
       this._setCellText(
-        index, 
+        index,
         String.fromCharCode(event.keyCode).toUpperCase());
       if (event.keyCode == 8) {
         // The backspace key should move they cursor backwards.
@@ -435,8 +435,8 @@ crosswordPlayer.prototype = {
       }
     }
   },
-  
-  // Move the cursor forward based on the direction of the keypress
+
+  // Move the cursor forward based on the direction of the keypress.
   moveForward: function(index) {
     if (this._lastActive.direction) {
       this.moveDown(index);
