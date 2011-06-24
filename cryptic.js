@@ -229,7 +229,9 @@ function makeCluesList(clues) {
       clueItem.value = matches[1];
       text = matches[2];
     }
-    clueItem.textContent = text;
+    // XXX: We should replace the escaped HTML entities in |text| but for now
+    // we just use innerHTML.
+    clueItem.innerHTML = text;
     cluesList.appendChild(clueItem);
   }
   return cluesList;
