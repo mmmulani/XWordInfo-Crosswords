@@ -40,7 +40,7 @@ function loadCrosswordFromURL(url) {
  * clues: object with across and down arrays.
  * answers: object with across and down arrays, same order as clues.
  *
- * progress: array of size rows*cols. Each element is a space character
+ * progress: array of size rows*cols. Each element is the empty string
  *    indicating no progress or a string (does not have to match grid).
  *    This is an added property and not found in XWordInfo crosswords.
  */
@@ -295,12 +295,42 @@ crosswordPlayer.prototype = {
     return indices;
   },
 
-  _setCellText: function(index, value) {
-    this._getCellTextNode(index).innerHTML = value;
+  _setCellText: function(index, value, correct) {
+    var textNode = this._getCellTextNode(index);
+    textNode.parentNode.setAttribute("correct", correct);
+    textNode.innerHTML = value;
+  },
+
+  // fillInLetter: This should be the main interface for inputting answers
+  // onto the crossword board. An empty string for |value| should be used to
+  // erase a letter. |value| can be a lower or upper case character.
+  fillInLetter: function(index, value) {
+    value = value.toUpperCase();
+    if (value.length > 1)
+      value = value[0];
+
+    // Make sure that |value| is either a alphabet letter or blank.
+    if (!((value == "") || ("A" <= value && value <= "Z")))
+      return;
+
+    // Make sure the spot is meant to be filled in (not a black square).
+    if (this._crossword.grid[index] == ".")
+      return;
+
+    var correct = this._crossword.grid[index].toUpperCase() == value;
+    if (correct)
+      this._crossword.progress[index] = value;
+
+    this._setCellText(index, value, correct);
   },
 
   init: function() {
     var self = this;
+
+    // Make sure our |_crossword| has the additional properties not found in
+    // XWordInfo crosswords.
+    if (typeof(this._crossword.progress) == "undefined")
+      this._crossword.progress = new Array(this._crossword.grid.length);
 
     this._board.addEventListener("click", function(event) {
       self.onBoardClick(event);
@@ -395,12 +425,12 @@ crosswordPlayer.prototype = {
       switch (event.keyCode) {
         // Delete key.
         case 46:
-          this._setCellText(index, '');
+          this.fillInLetter(index, '');
           break;
 
         // Backspace key.
         case 8:
-          this._setCellText(index, '');
+          this.fillInLetter(index, '');
           this.moveBackward(index)
           break;
 
@@ -438,9 +468,7 @@ crosswordPlayer.prototype = {
       }
 
       // Display the character on the screen at the current highlighted spot.
-      this._setCellText(
-        index,
-        String.fromCharCode(event.keyCode).toUpperCase());
+      this.fillInLetter(index, String.fromCharCode(event.keyCode));
       this.moveForward(index);
     }
   },

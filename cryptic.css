@@ -22,6 +22,9 @@
   width: 2em;
   height: 2em;
 }
+.puzzle-item[correct="false"] .puzzle-text {
+  color: rgb(255, 0, 0);
+}
 
 .puzzle-cell[blank="true"] {
   background-color: black;
