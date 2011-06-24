@@ -260,7 +260,7 @@ crosswordPlayer.prototype = {
   _crossword: null,
 
   // _lastActive has an |index| and |direction| property of the last active
-  // item.
+  // item. |direction| is vertical iff it is truthy.
   _lastActive: null,
   _getCellAt: function(index) {
     var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
@@ -272,7 +272,6 @@ crosswordPlayer.prototype = {
       ._getCellAt(index)
       .getElementsByClassName('puzzle-item')[0]
       .getElementsByClassName('puzzle-text')[0];
-
   },
 
   // This returns an array of indices corresponding to the word at |index|.
@@ -294,8 +293,8 @@ crosswordPlayer.prototype = {
     return indices;
   },
 
-  _setCell: function(index, value) {
-    this._getCellTextNode(index).innerHTML = String.fromCharCode(value);
+  _setCellText: function(index, value) {
+    this._getCellTextNode(index).innerHTML = value;
   },
 
   init: function() {
@@ -343,7 +342,6 @@ crosswordPlayer.prototype = {
 
     cell.setAttribute("active", "selected");
 
-    // direction is vertical iff vert is truthy 
     this._lastActive = { index: index, direction: vert };
   },
 
@@ -424,14 +422,15 @@ crosswordPlayer.prototype = {
       }
 
       // Display the character on the screen at the current highlighted spot
-      this._setCell(index, event.keyCode);
+      this._setCellText(
+        index, 
+        String.fromCharCode(event.keyCode).toUpperCase());
       this.moveForward(index);
     }
   },
   
   // Move the cursor forward based on the direction of the keypress
   moveForward: function(index) {
-    console.log(this._lastActive.direction);
     if (this._lastActive.direction) {
       this.moveDown(index);
     } else {
