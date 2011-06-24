@@ -174,8 +174,6 @@ function drawCrossword() {
 
       var textDiv = document.createElement("div");
       textDiv.className += "puzzle-text ";
-      textDiv.innerHTML = isBlank ? "" :
-             (Math.floor(10 + (Math.random() * 26))).toString(36).toUpperCase();
 
       content.appendChild(textDiv);
     }
@@ -344,6 +342,12 @@ crosswordPlayer.prototype = {
     entryBox.addEventListener("keydown", keyListener, false);
     entryBox._lastListener = keyListener;
     entryBox.focus();
+
+    // Reload the progress from the saved crossword.
+    this._crossword.progress.map(function(x, index) {
+      if ((typeof(x) != "undefined") && !!x)
+        self.fillInLetter(index, x);
+    });
   },
 
   // This focuses the crossword at |index|, in direction |vert| and allows
