@@ -390,6 +390,17 @@ crosswordPlayer.prototype = {
     if (!event.ctrlKey && !event.metaKey) {
       var handled = true;
       switch (event.keyCode) {
+        // Delete key.
+        case 46:
+          this._setCellText(index, '');
+          break;
+
+        // Backspace key.
+        case 8:
+          this._setCellText(index, '');
+          this.moveBackward(index)
+          break;
+
         // Space key.
         case 32:
           this.activate(index, !this._lastActive.direction);
@@ -437,6 +448,14 @@ crosswordPlayer.prototype = {
       this.moveDown(index);
     } else {
       this.moveRight(index);
+    }
+  },
+
+  moveBackward: function(index) {
+    if (this._lastActive.direction) {
+      this.moveUp(index);
+    } else {
+      this.moveLeft(index);
     }
   },
 
