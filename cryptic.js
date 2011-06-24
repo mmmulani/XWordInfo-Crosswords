@@ -374,34 +374,33 @@ crosswordPlayer.prototype = {
 
     var index = this._lastActive.index;
     if (!event.ctrlKey && !event.metaKey) {
-      var handled = false;
+      var handled = true;
       switch (event.keyCode) {
         // Space key.
         case 32:
-          handled = true;
           this.activate(index, !this._lastActive.direction);
           break;
 
         // Left key.
         case 37:
-          handled = true;
           this.moveLeft(index);
           break;
         // Right key.
         case 39:
-          handled = true;
           this.moveRight(index);
           break;
 
         // Up key.
         case 38:
-          handled = true;
           this.moveUp(index);
           break;
         // Down key.
         case 40:
-          handled = true;
           this.moveDown(index);
+          break;
+
+        default:
+          handled = false;
           break;
       }
 
