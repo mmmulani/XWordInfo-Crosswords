@@ -262,12 +262,20 @@ crosswordPlayer.prototype = {
   _crossword: null,
 
   // _lastActive has an |index| and |direction| property of the last active
-  // item.
+  // item. |direction| is vertical iff it is truthy.
   _lastActive: null,
   _getCellAt: function(index) {
     var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
     return !row ? undefined : row.childNodes[index % this._crossword.size.cols];
   },
+
+  _getCellTextNode: function(index) {
+    return this
+      ._getCellAt(index)
+      .getElementsByClassName('puzzle-item')[0]
+      .getElementsByClassName('puzzle-text')[0];
+  },
+
   // This returns an array of indices corresponding to the word at |index|.
   _getIndices: function(index, vert) {
     var jumpAmount = vert ? this._crossword.size.cols : 1;
@@ -285,6 +293,10 @@ crosswordPlayer.prototype = {
       indices.push(i);
 
     return indices;
+  },
+
+  _setCellText: function(index, value) {
+    this._getCellTextNode(index).innerHTML = value;
   },
 
   init: function() {
@@ -410,6 +422,21 @@ crosswordPlayer.prototype = {
         event.preventDefault();
         return;
       }
+
+      // Display the character on the screen at the current highlighted spot
+      this._setCellText(
+        index, 
+        String.fromCharCode(event.keyCode).toUpperCase());
+      this.moveForward(index);
+    }
+  },
+  
+  // Move the cursor forward based on the direction of the keypress
+  moveForward: function(index) {
+    if (this._lastActive.direction) {
+      this.moveDown(index);
+    } else {
+      this.moveRight(index);
     }
   },
 
