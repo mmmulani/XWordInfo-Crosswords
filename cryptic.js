@@ -321,7 +321,10 @@ crosswordPlayer.prototype = {
   activate: function(index, vert) {
     var self = this;
 
-    // This case can happen when the user clicks on a black square.
+    if (arguments.length < 2)
+      vert = this._lastActive.direction;
+
+    // This case can happen when |index| is a black square.
     if (this._crossword.grid[index] == ".")
       return;
 
@@ -442,21 +445,23 @@ crosswordPlayer.prototype = {
     }
   },
 
-  // Move the cursor forward based on the direction of the keypress.
+  // move[Forward,Backward]: Move the cursor forward/backward based on the
+  // current direction and stop at the word boundary.
   moveForward: function(index) {
-    if (this._lastActive.direction) {
-      this.moveDown(index);
-    } else {
-      this.moveRight(index);
-    }
+    this._moveWithinWord(index, this._lastActive.direction, 1);
+  },
+  moveBackward: function(index) {
+    this._moveWithinWord(index, this._lastActive.direction, -1);
   },
 
-  moveBackward: function(index) {
-    if (this._lastActive.direction) {
-      this.moveUp(index);
-    } else {
-      this.moveLeft(index);
-    }
+  // _moveWithinWord: Moves focus |dist| away from |index| within the boundaries
+  // of the word at |index| in |direction|.
+  _moveWithinWord: function(index, direction, dist) {
+    var indices = this._getIndices(index, direction);
+
+    var nextIndex = indices[indices.indexOf(index) + dist];
+    if (typeof(nextIndex) != "undefined")
+      this.activate(nextIndex);
   },
 
   // The move[Left,Right,Up,Down] functions each take the index from which
