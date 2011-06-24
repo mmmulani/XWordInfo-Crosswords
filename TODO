@@ -1,7 +1,7 @@
 soon:
   - server communication?
-  - interface to fill in puzzles
-  - show clues in scroll box with proper scrolling
+  - show current clue and add click-to-spot from clue
+  - add crossword browser (for locally saved crosswords or possibly from remote list)
 
 later:
   - show crosswords by LRU
