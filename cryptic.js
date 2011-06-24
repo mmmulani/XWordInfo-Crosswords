@@ -109,7 +109,7 @@ function addCrossword(crossword) {
   crosswordCount++;
 }
 
-const HTML5_CROSSWORD_STORE = "cryptic_crosswords";
+var HTML5_CROSSWORD_STORE = "cryptic_crosswords";
 
 // loadCrosswordsFromStorage: Load crosswords into crosswords array using
 // HTML5 local storage. This operation should merge the crosswords from
