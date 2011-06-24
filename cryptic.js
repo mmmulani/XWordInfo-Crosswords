@@ -427,7 +427,12 @@ crosswordPlayer.prototype = {
       this._setCellText(
         index, 
         String.fromCharCode(event.keyCode).toUpperCase());
-      this.moveForward(index);
+      if (event.keyCode == 8) {
+        // The backspace key should move they cursor backwards.
+        this.moveBackward(index)
+      } else {  
+        this.moveForward(index);
+      }
     }
   },
   
@@ -437,6 +442,14 @@ crosswordPlayer.prototype = {
       this.moveDown(index);
     } else {
       this.moveRight(index);
+    }
+  },
+
+  moveBackward: function(index) {
+    if (this._lastActive.direction) {
+      this.moveUp(index);
+    } else {
+      this.moveLeft(index);
     }
   },
 
