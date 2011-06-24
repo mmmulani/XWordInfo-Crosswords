@@ -390,6 +390,17 @@ crosswordPlayer.prototype = {
     if (!event.ctrlKey && !event.metaKey) {
       var handled = true;
       switch (event.keyCode) {
+        // Delete key.
+        case 46:
+          this._setCellText(index, '');
+          break;
+
+        // Backspace key.
+        case 8:
+          this._setCellText(index, '');
+          this.moveBackward(index)
+          break;
+
         // Space key.
         case 32:
           this.activate(index, !this._lastActive.direction);
@@ -427,12 +438,7 @@ crosswordPlayer.prototype = {
       this._setCellText(
         index,
         String.fromCharCode(event.keyCode).toUpperCase());
-      if (event.keyCode == 8) {
-        // The backspace key should move they cursor backwards.
-        this.moveBackward(index)
-      } else {  
-        this.moveForward(index);
-      }
+      this.moveForward(index);
     }
   },
 
