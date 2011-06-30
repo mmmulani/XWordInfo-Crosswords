@@ -6,13 +6,13 @@ var http = require('http'),
 var crosswords = require("./puzzle.js");
 
 var bayeux = new faye.NodeAdapter({
-  mount:   '/crossword',
+  mount: '/crossword',
   timeout: 45,
 });
 
 var client = bayeux.getClient();
 client.subscribe("/room1", function(message) {
-  console.log("Received message: " + message.text);
+  console.log("Received message: " + message.command);
 });
 
 var server = http.createServer(function(request, response) {

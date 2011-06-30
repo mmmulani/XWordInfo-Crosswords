@@ -309,7 +309,7 @@ crosswordPlayer.prototype = {
   // fillInLetter: This should be the main interface for inputting answers
   // onto the crossword board. An empty string for |value| should be used to
   // erase a letter. |value| can be a lower or upper case character.
-  fillInLetter: function(index, value) {
+  fillInLetter: function(index, value, fromUpdate) {
     value = value.toUpperCase();
     if (value.length > 1)
       value = value[0];
@@ -328,7 +328,17 @@ crosswordPlayer.prototype = {
 
     this._setCellText(index, value, correct);
 
-    this._client.update();
+    if (!fromUpdate) { 
+      this._client.update(this._crossword.progress);
+    }
+  },
+
+  update: function(progress) {
+    for (var i = 0; i < progress.length; i++) {
+      if (progress[i]) {
+        this.fillInLetter(i, progress[i], true);
+      } 
+    }
   },
 
   init: function() {
@@ -358,7 +368,7 @@ crosswordPlayer.prototype = {
         self.fillInLetter(index, x);
     });
 
-    this._client = new crosswordClient(this._room);
+    this._client = new crosswordClient(this._room, this.update);
   },
 
   // This focuses the crossword at |index|, in direction |vert| and allows
