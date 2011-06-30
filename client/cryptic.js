@@ -337,7 +337,8 @@ crosswordPlayer.prototype = {
     // Make sure our |_crossword| has the additional properties not found in
     // XWordInfo crosswords.
     if (typeof(this._crossword.progress) == "undefined")
-      this._crossword.progress = new Array(this._crossword.grid.length);
+      this._crossword.progress =
+        new Array(this._crossword.grid.length + 1).join(" ").split(" ");
 
     this._board.addEventListener("click", function(event) {
       self.onBoardClick(event);

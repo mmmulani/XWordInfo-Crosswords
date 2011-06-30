@@ -35,6 +35,6 @@ var puzzle = {
 
 // Check for the |progress| array as its not part of the XWordInfo standard.
 if (typeof(puzzle.progress) == "undefined")
-  puzzle.progress = new Array(puzzle.grid.length);
+  puzzle.progress = new Array(puzzle.grid.length + 1).join(" ").split(" ");
 
 exports.puzzle = puzzle;

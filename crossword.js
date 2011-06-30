@@ -10,6 +10,33 @@ var bayeux = new faye.NodeAdapter({
   timeout: 45,
 });
 
+// mergeProgress: takes two arrays of strings and copies all entries from |arrB|
+// into |arrA| where they do not exist. Defaults to |arrA| for most choices.
+function mergeProgress(progA, progB) {
+  if (progA.length != progB.length)
+    return progA;
+
+  var toRet = progA.slice();
+  for (var i = 0; i < progA.length; i++) {
+    if ((progB[i]) && !(progA[i]))
+      toRet[i] = progB[i];
+  }
+  return toRet;
+}
+
+var mergeCrosswordData = {
+  incoming: function(message, callback) {
+    console.log(message);
+    if (message.channel != "/room1")
+      return callback(message);
+
+    var oldProgress = message.data.progress;
+    message.data.text = "New message";
+    callback(message);
+  },
+};
+bayeux.addExtension(mergeCrosswordData);
+
 var client = bayeux.getClient();
 client.subscribe("/room1", function(message) {
   console.log("Received message: " + message.text);
