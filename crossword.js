@@ -2,6 +2,9 @@ var http = require('http'),
     faye = require('faye'),
     PORT = 8001;
 
+// Can access the "current" puzzle at |crosswords.puzzle|.
+var crosswords = require("./puzzle.js");
+
 var bayeux = new faye.NodeAdapter({
   mount:   '/crossword',
   timeout: 45,
