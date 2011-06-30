@@ -13,8 +13,12 @@ cleanup() {
 
 trap cleanup SIGINT
 
+# Run the script from the correct directory
+cd `dirname $0`
+
 node crossword.js &
 nodepid=$!
+cd client
 python -m SimpleHTTPServer > /dev/null &
 pypid=$!
 
