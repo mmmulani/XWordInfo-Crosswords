@@ -249,12 +249,19 @@ function randomProperty(obj) {
 function crosswordPlayer(board, crossword) {
   this._board = board;
   this._crossword = crossword;
+  this._room = 'room1';
 
   this.init();
 }
 crosswordPlayer.prototype = {
   // This is the HTML table element corresponding to the board.
   _board: null,
+
+  // Crossword client to send messages.
+  _client: null,
+
+  // The room this player will be sending messages to 
+  _room: null,
 
   // Crossword object as defined earlier.
   _crossword: null,
@@ -320,6 +327,8 @@ crosswordPlayer.prototype = {
       this._crossword.progress[index] = value;
 
     this._setCellText(index, value, correct);
+
+    this._client.update();
   },
 
   init: function() {
@@ -348,6 +357,8 @@ crosswordPlayer.prototype = {
       if ((typeof(x) != "undefined") && !!x)
         self.fillInLetter(index, x);
     });
+
+    this._client = new crosswordClient(this._room);
   },
 
   // This focuses the crossword at |index|, in direction |vert| and allows

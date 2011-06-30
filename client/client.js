@@ -1,9 +1,18 @@
-var client = new Faye.Client("http://localhost:8001/crossword");
+function crosswordClient(room) {
+  this._client = new Faye.Client("http://localhost:8001/crossword");
+  this._room = '/' + room;
+  console.log(this._room);
+  this._subscription = this._client.subscribe(this._room, function(message) {
+    console.log('Recvd ' + message.text);
+  });
+}
 
-var subscription = client.subscribe("/room1", function(message) {
-  alert(message.text);
-});
-subscription.callback(function() {
-  alert("Subscription is now active!");
-  client.publish("/room1", { text: "Test message" });
-});
+crosswordClient.prototype = {
+  _client: null,
+  _subscription: null,
+
+  update: function() {
+    console.log('updating to ' + this._room);
+    this._client.publish(this._room, { text: "OH GOD" });
+  },
+};
