@@ -13,7 +13,7 @@ cleanup() {
 
 trap cleanup SIGINT
 
-# Run the script from the correct directory
+# Run the script from the script's own directory
 cd `dirname $0`
 
 node crossword.js &
@@ -27,6 +27,6 @@ echo $pypid
 
 while :
 do
-    sleep 100
+  sleep 100
 done
 
