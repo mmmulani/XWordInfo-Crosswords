@@ -328,7 +328,7 @@ crosswordPlayer.prototype = {
 
     this._setCellText(index, value, correct);
 
-    if (!fromUpdate) { 
+    if (!fromUpdate) {
       this._client.update(this._crossword.progress);
     }
   },
@@ -366,10 +366,10 @@ crosswordPlayer.prototype = {
     // Reload the progress from the saved crossword.
     this._crossword.progress.map(function(x, index) {
       if ((typeof(x) != "undefined") && !!x)
-        self.fillInLetter(index, x);
+        self.fillInLetter(index, x, true);
     });
 
-    this._client = new crosswordClient(this._room, this.update);
+    this._client = new crosswordClient(this._room, this.update.bind(this));
   },
 
   // This focuses the crossword at |index|, in direction |vert| and allows

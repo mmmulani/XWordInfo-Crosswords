@@ -31,7 +31,9 @@ var mergeCrosswordData = {
       return callback(message);
 
     var oldProgress = message.data.progress;
-    message.data.text = "New message";
+    var newProgress = mergeProgress(crosswords.puzzle.progress, oldProgress);
+    crosswords.puzzle.progress = newProgress;
+    message.data.progress = newProgress;
     callback(message);
   },
 };

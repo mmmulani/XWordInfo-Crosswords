@@ -31,7 +31,7 @@ crosswordClient.prototype = {
     this._timer = setTimeout(function() {
       self._timer = null;
       self._client.publish(
-        self._room, 
+        self._room,
         { command: "update", progress: self._progress }
       );
     }, 1000); 
