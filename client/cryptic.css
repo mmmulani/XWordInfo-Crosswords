@@ -1,3 +1,12 @@
+.cluesList li {
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.cluesList li:hover {
+  background-color: #ccc;
+}
+
 .puzzle-board {
   border: 1px solid black;
   border-collapse: collapse;

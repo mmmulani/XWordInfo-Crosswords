@@ -194,6 +194,18 @@ function drawCrossword() {
   var down = crossword.clues.down;
   var downList = makeCluesList(down);
 
+  // Add a class to the clue containers to distiguish them in the DOM.
+  acrossList.className += 'across ';
+  downList.className += 'down ';
+
+  // Handle clicks on the clues.
+  acrossList.addEventListener('click', function(event) {
+    table._player.onClueClick(event);
+  }, false);
+  downList.addEventListener('click', function(event) {
+    table._player.onClueClick(event);
+  }, false);
+
   // Horizontally arrange the board and clues.
   var horizList = document.createElement("ul");
   horizList.style.listStyleType = "none";
@@ -217,6 +229,7 @@ function drawCrossword() {
 // The passed in |clues| is of the form ["1. Clue", "3. Clue", etc.].
 function makeCluesList(clues) {
   var cluesList = document.createElement("ol");
+  cluesList.className += 'cluesList ';
   for (var i = 0; i < clues.length; i++) {
     var clueItem = document.createElement("li");
     var text = clues[i];
@@ -456,6 +469,22 @@ crosswordPlayer.prototype = {
     if (this._lastActive)
       direction =
         (this._lastActive.index == index) ^ this._lastActive.direction;
+    this.activate(index, direction);
+  },
+
+  onClueClick: function(event) {
+    var direction = (event.target.parentNode.className.indexOf('down') >= 0);
+    var clueNum = event.target.value;
+
+    // Find the index for that clue number.
+    var index = 0;
+    for (var i = 0; i < this._crossword.gridnums.length; i++) {
+      if (this._crossword.gridnums[i] == clueNum) {
+        index = i;
+        break;
+      }
+    }
+
     this.activate(index, direction);
   },
 
