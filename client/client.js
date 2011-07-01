@@ -1,5 +1,7 @@
 function crosswordClient(room, updateCallback) {
-  this._client = new Faye.Client("http://localhost:8001/crossword");
+  this._client = new Faye.Client(
+    'http://corn-syrup.csclub.uwaterloo.ca:8008/crossword'
+  );
   this._room = '/' + room;
   this._timer = null;
   this._updateCallback = updateCallback;
