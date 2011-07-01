@@ -22,8 +22,8 @@ cd client
 python -m SimpleHTTPServer > /dev/null &
 pypid=$!
 
-echo $nodepid
-echo $pypid
+echo "Node PID: $nodepid"
+echo "Python PID: $pypid"
 
 while :
 do
