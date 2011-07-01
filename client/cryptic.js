@@ -34,8 +34,8 @@ function loadCrosswordFromURL(url) {
  * grid: array of size rows*cols. Each element is a letter or fill-in.
          If a space is not filled, it is a "." character.
  * gridnums: array of size rows*cols. Each element is a number corresponding
-             to the number meant to be in display. If no number is meant to be
-             displayed, a 0 is used.
+             to the number meant to be in display. If no number is meant to
+             be displayed, a 0 is used.
  * circles: array of size rows*cols. Each element is 0 or 1.
  * clues: object with across and down arrays.
  * answers: object with across and down arrays, same order as clues.
@@ -52,7 +52,8 @@ function loadCrossword(data) {
 }
 
 // entryBox: an input box that the user interacts with in order to play the
-//           crossword. An event listener is added by the crosswordPlayer object.
+//           crossword. An event listener is added by the crosswordPlayer
+//           object.
 var entryBox;
 
 // crosswords: hash of dates, each date is an array of crosswords.
@@ -120,7 +121,8 @@ function loadCrosswordsFromStorage() {
   if (typeof(localStorage) == "undefined")
     return;
 
-  var newCrosswords = JSON.parse(localStorage.getItem(HTML5_CROSSWORD_STORE));
+  var newCrosswords =
+    JSON.parse(localStorage.getItem(HTML5_CROSSWORD_STORE));
   for (var dateArr in newCrosswords)
     newCrosswords[dateArr].forEach(addCrossword);
 }
@@ -227,8 +229,8 @@ function makeCluesList(clues) {
       clueItem.value = matches[1];
       text = matches[2];
     }
-    // XXX: We should replace the escaped HTML entities in |text| but for now
-    // we just use innerHTML.
+    // XXX: We should replace the escaped HTML entities in |text| but for
+    // now we just use innerHTML.
     clueItem.innerHTML = text;
     cluesList.appendChild(clueItem);
   }
@@ -260,7 +262,7 @@ crosswordPlayer.prototype = {
   // Crossword client to send messages.
   _client: null,
 
-  // The room this player will be sending messages to 
+  // The room this player will be sending messages to
   _room: null,
 
   // Crossword object as defined earlier.
@@ -271,7 +273,9 @@ crosswordPlayer.prototype = {
   _lastActive: null,
   _getCellAt: function(index) {
     var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
-    return !row ? undefined : row.childNodes[index % this._crossword.size.cols];
+    return !row ?
+      undefined :
+      row.childNodes[index % this._crossword.size.cols];
   },
 
   _getCellTextNode: function(index) {
@@ -285,9 +289,12 @@ crosswordPlayer.prototype = {
   _getIndices: function(index, vert) {
     var jumpAmount = vert ? this._crossword.size.cols : 1;
     var indices = [];
-    var start = vert ? 0 :
-              this._crossword.size.cols * ~~(index / this._crossword.size.cols);
-    var end = vert ? this._crossword.grid.length : start + this._crossword.size.cols;
+    var start = vert ?
+      0 :
+      this._crossword.size.cols * ~~(index / this._crossword.size.cols);
+    var end = vert ?
+      this._crossword.grid.length :
+      start + this._crossword.size.cols;
     for (var i = index;
          (i >= start) && (this._crossword.grid[i] != ".");
          i -= jumpAmount)
@@ -339,7 +346,7 @@ crosswordPlayer.prototype = {
     for (var i = 0; i < progress.length; i++) {
       if (progress[i]) {
         this.fillInLetter(i, progress[i], true);
-      } 
+      }
     }
   },
 
@@ -356,8 +363,14 @@ crosswordPlayer.prototype = {
       self.onBoardClick(event);
     }, false);
 
-    if (entryBox._lastListener)
-      entryBox.removeEventListener("keydown", entryBox._lastListener, false);
+    if (entryBox._lastListener) {
+      entryBox.removeEventListener(
+        "keydown",
+        entryBox._lastListener,
+        false
+      );
+    }
+
     var keyListener = function(event) {
       self.onKeyDown(event);
     };
@@ -426,17 +439,23 @@ crosswordPlayer.prototype = {
     if (!cell)
       return;
 
-    var column = Array.prototype.indexOf.call(cell.parentNode.childNodes, cell);
-    var row = Array.prototype.indexOf.call(cell.parentNode.parentNode.childNodes,
-                                           cell.parentNode);
+    var column = Array.prototype.indexOf.call(
+      cell.parentNode.childNodes,
+      cell
+    );
+    var row = Array.prototype.indexOf.call(
+      cell.parentNode.parentNode.childNodes,
+      cell.parentNode
+    );
     var index = (row * this._crossword.size.cols) + column;
 
     // We change the direction of the shown clue if the user clicks on the
-    // selected cell. Otherwise, we move to the cell clicked and maintain the
-    // direction.
+    // selected cell. Otherwise, we move to the cell clicked and maintain
+    // the direction.
     var direction = false;
     if (this._lastActive)
-      direction = (this._lastActive.index == index) ^ this._lastActive.direction;
+      direction =
+        (this._lastActive.index == index) ^ this._lastActive.direction;
     this.activate(index, direction);
   },
 
@@ -530,7 +549,8 @@ crosswordPlayer.prototype = {
   // The move[Left,Right,Up,Down] functions each take the index from which
   // they will move.
   moveLeft: function(index) {
-    var start = this._crossword.size.cols * ~~(index / this._crossword.size.cols);
+    var start =
+      this._crossword.size.cols * ~~(index / this._crossword.size.cols);
     var i;
     for (i = index - 1; i >= start && this._crossword.grid[i] == "."; i--);
 
@@ -539,7 +559,8 @@ crosswordPlayer.prototype = {
     this.activate(index, this._lastActive.direction);
   },
   moveRight: function(index) {
-    var end = this._crossword.size.cols * ~~(1 + index / this._crossword.size.cols);
+    var end =
+      this._crossword.size.cols * ~~(1 + index / this._crossword.size.cols);
     var i;
     for (i = index + 1; i < end && this._crossword.grid[i] == "."; i++);
 
