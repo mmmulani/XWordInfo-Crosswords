@@ -4,7 +4,11 @@
 }
 
 .cluesList li:hover {
-  background-color: #ccc;
+  background-color: rgb(240, 240, 240);
+}
+
+.cluesList li.current {
+  background-color: rgb(227, 227, 227);
 }
 
 .puzzle-board {

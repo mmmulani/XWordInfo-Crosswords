@@ -1,7 +1,6 @@
 soon:
-  - server communication?
-  - show current clue and add click-to-spot from clue
   - add crossword browser (for locally saved crosswords or possibly from remote list)
+  - Cross out finished/correct clues
 
 later:
   - show crosswords by LRU

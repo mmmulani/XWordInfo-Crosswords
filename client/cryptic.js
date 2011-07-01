@@ -186,7 +186,6 @@ function drawCrossword() {
   do {
     randomSpot = Math.floor(Math.random() * crossword.grid.length);
   } while (crossword.grid[randomSpot] == ".");
-  table._player.activate(randomSpot, Math.random() > 0.5);
 
   // Now create the Clues.
   var across = crossword.clues.across;
@@ -195,8 +194,8 @@ function drawCrossword() {
   var downList = makeCluesList(down);
 
   // Add a class to the clue containers to distiguish them in the DOM.
-  acrossList.className += 'across ';
-  downList.className += 'down ';
+  acrossList.id = 'across';
+  downList.id = 'down';
 
   // Handle clicks on the clues.
   acrossList.addEventListener('click', function(event) {
@@ -224,6 +223,9 @@ function drawCrossword() {
   }
 
   document.body.appendChild(horizList);
+
+  // Activate last after the crossword and clues have been all set up.
+  table._player.activate(randomSpot, Math.random() > 0.5);
 }
 
 // The passed in |clues| is of the form ["1. Clue", "3. Clue", etc.].
@@ -284,6 +286,7 @@ crosswordPlayer.prototype = {
   // _lastActive has an |index| and |direction| property of the last active
   // item. |direction| is vertical iff it is truthy.
   _lastActive: null,
+
   _getCellAt: function(index) {
     var row = this._board.childNodes[~~(index / this._crossword.size.cols)];
     return !row ?
@@ -296,6 +299,34 @@ crosswordPlayer.prototype = {
       ._getCellAt(index)
       .getElementsByClassName('puzzle-item')[0]
       .getElementsByClassName('puzzle-text')[0];
+  },
+
+  // Return the clue # at position |index| in direction |direction|.
+  _getClueNumber: function(index, direction) {
+    var firstIndex = this._getIndices(index, direction)[0];
+    var clue = this._crossword.gridnums[firstIndex];
+    if (!clue) {
+      // There should be a clue here -- something bad happened.
+      console.log('Index with no clue');
+      return 1;
+    }
+
+    return clue
+  },
+
+  // Gets the <li> element for the clue with number |cluenum| in
+  // direction |direction|.
+  _getClueCell: function(cluenum, direction) {
+    var directionId = (direction ? 'down' : 'across');
+    var clues = document.getElementById(directionId).childNodes;
+    for (var i = 0; i < clues.length; i++) {
+      if (clues[i].value == cluenum) {
+        return clues[i];
+      }
+    }
+
+    // If the clue doesn't exist in the list, just return null.
+    return null;
   },
 
   // This returns an array of indices corresponding to the word at |index|.
@@ -432,9 +463,28 @@ crosswordPlayer.prototype = {
 
     cell.setAttribute("active", "selected");
 
-    this._lastActive = { index: index, direction: vert };
+    this.highlightClue(this._getClueNumber(index, vert), vert);
 
+    this._lastActive = { index: index, direction: vert };
     entryBox.focus();
+  },
+
+  // Highlight the clue in the clues list with clue number |cluenum|
+  // in direction |direction|.
+  highlightClue: function(cluenum, direction) {
+    // If there was a previously active clue, un-highlight it.
+    if (this._lastActive) {
+      var lastClueNum = this._getClueNumber(
+        this._lastActive.index,
+        this._lastActive.direction
+      );
+
+      var oldCell =
+        this._getClueCell(lastClueNum, this._lastActive.direction);
+      oldCell.className = oldCell.className.replace('current', '');
+    }
+
+    this._getClueCell(cluenum, direction).className += 'current ';
   },
 
   onBoardClick: function(event) {
