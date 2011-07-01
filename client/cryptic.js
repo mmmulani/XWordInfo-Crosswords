@@ -372,6 +372,7 @@ crosswordPlayer.prototype = {
     });
 
     this._client = new crosswordClient(this._room, this.update.bind(this));
+    this._client.update(this._crossword.progress);
   },
 
   // This focuses the crossword at |index|, in direction |vert| and allows
