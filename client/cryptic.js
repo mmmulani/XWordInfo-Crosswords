@@ -433,12 +433,12 @@ crosswordPlayer.prototype = {
     cell.setAttribute("active", "selected");
 
     this._lastActive = { index: index, direction: vert };
+
+    entryBox.focus();
   },
 
   onBoardClick: function(event) {
     event.stopPropagation();
-
-    entryBox.focus();
 
     var cell;
     // The click might have been on an element inside the table cell, so we
