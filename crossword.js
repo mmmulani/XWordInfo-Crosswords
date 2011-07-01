@@ -32,6 +32,9 @@ var mergeCrosswordData = {
 
     var oldProgress = message.data.progress;
     var newProgress = mergeProgress(crosswords.puzzle.progress, oldProgress);
+    newProgress = newProgress.map(function(x,i) {
+      return crosswords.puzzle.grid[i] == x ? x : '';
+    });
     crosswords.puzzle.progress = newProgress;
     message.data.progress = newProgress;
     callback(message);

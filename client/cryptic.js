@@ -323,14 +323,16 @@ crosswordPlayer.prototype = {
       return;
 
     var correct = this._crossword.grid[index].toUpperCase() == value;
-    if (correct)
-      this._crossword.progress[index] = value;
+    this._crossword.progress[index] = value;
 
     this._setCellText(index, value, correct);
 
-    if (!fromUpdate) {
+    if (!fromUpdate && correct)
       this._client.update(this._crossword.progress);
-    }
+  },
+
+  isFilledIn: function(index) {
+    return !!this._crossword.progress[index];
   },
 
   update: function(progress) {
@@ -456,8 +458,14 @@ crosswordPlayer.prototype = {
 
         // Backspace key.
         case 8:
-          this.fillInLetter(index, '');
-          this.moveBackward(index)
+          if (!this.isFilledIn(index)) {
+            this.moveBackward(index)
+            var newIndex = this._lastActive.index;
+            this.fillInLetter(newIndex, '');
+          }
+          else {
+            this.fillInLetter(index, '');
+          }
           break;
 
         // Space key.
