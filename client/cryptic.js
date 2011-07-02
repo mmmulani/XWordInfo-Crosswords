@@ -311,16 +311,16 @@ crosswordPlayer.prototype = {
       return 1;
     }
 
-    return clue
+    return clue;
   },
 
-  // Gets the <li> element for the clue with number |cluenum| in
+  // Gets the <li> element for the clue with number |clueNum| in
   // direction |direction|.
-  _getClueCell: function(cluenum, direction) {
+  _getClueCell: function(clueNum, direction) {
     var directionId = (direction ? 'down' : 'across');
     var clues = document.getElementById(directionId).childNodes;
     for (var i = 0; i < clues.length; i++) {
-      if (clues[i].value == cluenum) {
+      if (clues[i].value == clueNum) {
         return clues[i];
       }
     }
@@ -469,9 +469,9 @@ crosswordPlayer.prototype = {
     entryBox.focus();
   },
 
-  // Highlight the clue in the clues list with clue number |cluenum|
+  // Highlight the clue in the clues list with clue number |clueNum|
   // in direction |direction|.
-  highlightClue: function(cluenum, direction) {
+  highlightClue: function(clueNum, direction) {
     // If there was a previously active clue, un-highlight it.
     if (this._lastActive) {
       var lastClueNum = this._getClueNumber(
@@ -484,7 +484,7 @@ crosswordPlayer.prototype = {
       oldCell.className = oldCell.className.replace('current', '');
     }
 
-    this._getClueCell(cluenum, direction).className += 'current ';
+    this._getClueCell(clueNum, direction).className += 'current ';
   },
 
   onBoardClick: function(event) {
@@ -523,7 +523,7 @@ crosswordPlayer.prototype = {
   },
 
   onClueClick: function(event) {
-    var direction = (event.target.parentNode.className.indexOf('down') >= 0);
+    var direction = (event.target.parentNode.id.indexOf('down') >= 0);
     var clueNum = event.target.value;
 
     // Find the index for that clue number.
